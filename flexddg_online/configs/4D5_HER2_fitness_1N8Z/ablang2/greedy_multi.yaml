@@ -1,0 +1,60 @@
+data_dir: data/4D5_HER2_fitness_1N8Z/ablang2/greedy_multi
+pdb_file: pdbs/1N8Z.pdb
+seed: 42
+flx_num: 1
+max_cycles: 10
+mutable_chain: H
+wildtype_sequence:
+  H: EVQLVESGGGLVQPGGSLRLSCAASGFNIKDTYIHWVRQAPGKGLEWVARIYPTNGYTRYADSVKGRFTISADTSKNTAYLQMNSLRAEDTAVYYCSRWGGDGFYAMDYWGQGTLVTVSS
+mask_indices:
+- 96
+- 97
+- 98
+- 99
+- 100
+- 101
+- 102
+- 103
+- 104
+- 105
+- 106
+- 107
+- 108
+POI: 1N8Z
+mutations_col: mutations
+early_stop_patience: 20
+n_steps: 1000
+generation:
+  generation_mode: sampling
+  generation_num: 10000
+  temperature: 0.5
+  normalize_mode: default
+  ensemble_mode: true
+  ensemble_num: 10
+  online_generation: true
+  bias: true
+  generation_file: sampling/4D5_HER2_fitness_1N8Z/ablang2/bias/generation_result.csv
+acquisition:
+  is_multi_objective: true
+  strategy_name: greedy
+  acquisition_num: 40
+  strategy_params: {}
+lora_config:
+  target_modules:
+  - q_proj
+  - k_proj
+  - v_proj
+  - out_proj
+  - intermediate_layer.0
+  - intermediate_layer.2
+  modules_to_save: []
+  inference_mode: false
+  lora_dropout: 0.1
+  lora_alpha: 8
+light_wt_sequence: DIQMTQSPSSLSASVGDRVTITCRASQDVNTAVAWYQQKPGKAPKLLIYSASFLYSGVPSRFSGSRSGTDFTLTISSLQPEDFATYYCQQYFRMPPGFGQGTKVEIK
+model_type: ablang2
+# pattern B
+acquisition_weight:
+    acquisition_score: 2
+    ablang2_perplexity: 2
+    IP_seq: 0

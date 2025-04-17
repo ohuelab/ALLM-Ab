@@ -1,0 +1,33 @@
+data_dir: data/4D5_HER2_fitness_1N8Z/ablang_gp/ga
+pdb_file: pdbs/1N8Z.pdb
+seed: 42
+flx_num: 1
+max_cycles: 10
+mutable_chain: H
+wildtype_sequence:
+  H: EVQLVESGGGLVQPGGSLRLSCAASGFNIKDTYIHWVRQAPGKGLEWVARIYPTNGYTRYADSVKGRFTISADTSKNTAYLQMNSLRAEDTAVYYCSRWGGDGFYAMDYWGQGTLVTVSS
+mask_indices:
+- 96
+- 97
+- 98
+- 99
+- 100
+- 101
+- 102
+- 103
+- 104
+- 105
+- 106
+- 107
+- 108
+POI: 1N8Z
+mutations_col: mutations
+early_stop_patience: 20
+n_steps: 1000
+acquisition:
+  acquisition_num: 40
+light_wt_sequence: DIQMTQSPSSLSASVGDRVTITCRASQDVNTAVAWYQQKPGKAPKLLIYSASFLYSGVPSRFSGSRSGTDFTLTISSLQPEDFATYYCQQYFRMPPGFGQGTKVEIK
+model_type: ablang_gp
+model_params:
+  kernel: rbf
+  add_kernel: true

@@ -1,0 +1,28 @@
+active_learning:
+  M_cycles: 11
+  N_init: 50
+  N_per_cycle: 50
+  strategy: ucb
+add_kernel: true
+batch_size: 16
+dms_index: 0
+dms_input: ../input/Binding_substitutions_DMS_AL/
+dms_input_esm: ../modelzoo/esm2/output
+early_stop_patience: 20
+embeddings: bindinggym_offline/input/embs/X_all_0.npy
+ensemble: true
+initial_selection_mode: random
+kernel_type: rbf
+lora: true
+mc_eval_interval: 5
+mc_splits: 5
+mc_train_steps: 100
+model_type: ablang2_gp
+noise_level: 0.5
+random_seed: 0
+structure_path: ../input/structures
+test_size: 100
+tmp_path: outputs_ablang/0/ucb_0.5/dms_0_N-50_ini-1
+train_dms_mapping: ../input/BindingGYM_AL.csv
+use_dropout: false
+use_weight: pretrained

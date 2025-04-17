@@ -1,0 +1,44 @@
+data_dir: data/5A12_Ang2_fitness_4ZFG/ablang_gp/greedy_offline
+pdb_file: pdbs/4ZFG.pdb
+seed: 42
+flx_num: 1
+max_cycles: 10
+mutable_chain: H
+wildtype_sequence:
+  H: EVQLVESGGGLVQPGGSLRLSCAASGFTISDYWIHWVRQAPGKGLEWVAGITPAGGYTYYADSVKGRFTISADTSKNTAYLQMNSLRAEDTAVYYCARFVFFLPYAMDYWGQGTLVTVSS
+mask_indices:
+- 96
+- 97
+- 98
+- 99
+- 100
+- 101
+- 102
+- 103
+- 104
+- 105
+- 106
+- 107
+- 108
+POI: 4ZFG
+mutations_col: mutations
+early_stop_patience: 20
+n_steps: 1000
+generation:
+  generation_mode: null
+  generation_num: 10000
+  temperature: 1.0
+  normalize_mode: default
+  ensemble_mode: true
+  ensemble_num: 10
+  online_generation: false
+  bias: true
+  generation_file: sampling/5A12_Ang2_fitness_4ZFG/ablang2/bias/generation_result.csv
+acquisition:
+  strategy_name: greedy
+  acquisition_num: 40
+light_wt_sequence: DIQMTQSPSSLSASVGDRVTITCRASQFLSSFGVAWYQQKPGKAPKLLIYGASSLYSGVPSRFSGSGSGTDFTLTISSLQPEDFATYYCQQGLLSPLTFGQGTKVEIK
+model_type: ablang_gp
+model_params:
+  kernel: rbf
+  add_kernel: true

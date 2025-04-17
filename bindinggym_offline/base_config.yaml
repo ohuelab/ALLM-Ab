@@ -1,0 +1,33 @@
+random_seed: 0
+
+tmp_path: "al_data/dms_sequence_0"
+
+train_dms_mapping: "../input/BindingGYM.csv"
+
+dms_index: 0
+dms_input: "../input/Binding_substitutions_DMS"
+
+test_size: 100
+noise_level: 0
+model_type: "sequence"
+
+use_weight: "pretrained"
+
+structure_path: "../input/structures"
+
+batch_size: 16
+
+active_learning:
+  N_init: 20
+  N_per_cycle: 20
+  M_cycles: 10
+  strategy: "greedy"
+
+mc_splits: 5
+mc_train_steps: 100
+mc_eval_interval: 5
+early_stop_patience: 20
+
+ensemble: False
+
+lora: True

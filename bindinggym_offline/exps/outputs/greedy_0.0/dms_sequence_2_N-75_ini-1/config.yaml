@@ -1,0 +1,25 @@
+active_learning:
+  M_cycles: 7
+  N_init: 75
+  N_per_cycle: 75
+  strategy: greedy
+batch_size: 16
+dms_index: 2
+dms_input: ../input/Binding_substitutions_DMS_AL
+dms_input_esm: ../modelzoo/esm2/output
+early_stop_patience: 20
+ensemble: false
+initial_selection_mode: notrandom
+lora: true
+mc_eval_interval: 5
+mc_splits: 5
+mc_train_steps: 100
+model_type: sequence
+noise_level: 0
+random_seed: 0
+structure_path: ../input/structures
+test_size: 100
+tmp_path: outputs/greedy_0.0/dms_sequence_2_N-75_ini-1
+train_dms_mapping: ../input/BindingGYM_AL.csv
+use_dropout: false
+use_weight: pretrained
