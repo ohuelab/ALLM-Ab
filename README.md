@@ -7,43 +7,17 @@ This repository contains the code for ALLM-Ab, a multi-objective antibody optimi
 
 ## Setup
 
-### Requirements
-
-- Python 3.7+
-- PyTorch
-- PyTorch Geometric
-- PyGMO
-- NumPy
-- Pandas
-- scikit-learn
-- scipy
-- Biopython
-- tqdm
-- peft
-- ESM
-- ablang2
-- Easydict
-- PyYAML
-- PyGMO
-
 ### Installation
 
-1. Clone this repository:
+The easiest way is to install the dependencies listed in `pyproject.toml` using uv.
+
 ```bash
 git clone https://github.com/your-username/ALLM-Ab.git
 cd ALLM-Ab
+uv sync
 ```
 
-2. Install required Python packages:
-```bash
-pip install numpy pandas torch torch_geometric tqdm scikit-learn scipy peft easydict PyYAML biopython
-pip install fair-esm
-pip install ablang2
-pip install pygmo
-```
-
-
-3. [Flex ddG](https://github.com/Kortemme-Lab/flex_ddG_tutorial) installation is required for the flexddg_online component. (Optional)
+Optional: [Flex ddG](https://github.com/Kortemme-Lab/flex_ddG_tutorial) installation is required for the flexddg_online component.
 
 ### Data
 
@@ -67,6 +41,14 @@ Example:
 ```bash
 cd flexddg_online
 python al_run.py configs/5A12_dual/ablang2/greedy_dual.yaml
+```
+
+#### Filling Mode[TODO]
+
+A filling mode that supports general online active learning processes is available as follows.
+```bash
+cd flexddg_online
+python al_run_filling.py sample.yaml
 ```
 
 ## Project Structure
