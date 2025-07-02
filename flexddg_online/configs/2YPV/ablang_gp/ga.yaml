@@ -1,0 +1,32 @@
+data_dir: data/2YPV/ablang2/ga
+pdb_file: pdbs/2YPV.pdb
+seed: 42
+flx_num: 1
+max_cycles: 10
+mutable_chain: H
+wildtype_sequence:
+  H: QVQLQESGPELVKPGASVKISCKASGYSFSDYNMSWVKQSNGKSLEWIGIIDPKYGTINYNQKFKGKATLTVDQASSTAYMQLNSLTSEDSAVYYCVRDYYGSSYFDYWGQGTTLTVSS
+mask_indices:
+- 96
+- 97
+- 98
+- 99
+- 100
+- 101
+- 102
+- 103
+- 104
+- 105
+- 106
+- 107
+POI: 2YPV
+mutations_col: mutations
+early_stop_patience: 20
+n_steps: 1000
+acquisition:
+  acquisition_num: 40
+light_wt_sequence: DIVLTQSPSSIYASLGERVTLTCKASQDIHNYLNWFQQKPGKSPKTLIYRANRLVDGVPSRFSGGGSGQDYSLTISSLEFEDIGIYYCLQYDEFPPTFGGGTRLEIK
+model_type: ablang_gp
+model_params:
+  kernel: rbf
+  add_kernel: true

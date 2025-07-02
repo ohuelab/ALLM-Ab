@@ -1,13 +1,11 @@
-data_dir: data/5A12_dual/ablang2/greedy_dual
-pdb_files:
-- pdbs/4ZFG.pdb
-- pdbs/4ZFF.pdb
+data_dir: data/3VRL/ablang2/greedy_offline
+pdb_file: pdbs/3VRL.pdb
 seed: 42
 flx_num: 1
 max_cycles: 10
 mutable_chain: H
 wildtype_sequence:
-  H: EVQLVESGGGLVQPGGSLRLSCAASGFTISDYWIHWVRQAPGKGLEWVAGITPAGGYTYYADSVKGRFTISADTSKNTAYLQMNSLRAEDTAVYYCARFVFFLPYAMDYWGQGTLVTVSS
+  H: DVKLVESGGGLVKPGGSLKLSCAASGFTFSSYTMSWVRQTPEKRLEWVAIISSGGSYTYYSDSVKGRFTISRDNAKNTLYLQMSSLKSEDTAMYYCTRDEGNGNYVEAMDYWGQGTSVTVSS
 mask_indices:
 - 96
 - 97
@@ -22,25 +20,25 @@ mask_indices:
 - 106
 - 107
 - 108
-POI: XXXX
+- 109
+- 110
+POI: 3VRL
 mutations_col: mutations
 early_stop_patience: 20
 n_steps: 1000
 generation:
-  generation_mode: sampling
+  generation_mode: null
   generation_num: 10000
   temperature: 1.0
   normalize_mode: default
   ensemble_mode: true
   ensemble_num: 10
-  online_generation: true
+  online_generation: false
   bias: true
-  generation_file: sampling/5A12_dual/ablang2/bias/generation_result.csv
+  generation_file: sampling/3VRL/ablang2/bias/generation_result.csv
 acquisition:
-  is_multi_objective: true
   strategy_name: greedy
   acquisition_num: 40
-  strategy_params: {}
 lora_config:
   target_modules:
   - q_proj
@@ -53,10 +51,5 @@ lora_config:
   inference_mode: false
   lora_dropout: 0.1
   lora_alpha: 8
-light_wt_sequence: DIQMTQSPSSLSASVGDRVTITCRASQFLSSFGVAWYQQKPGKAPKLLIYGASSLYSGVPSRFSGSGSGTDFTLTISSLQPEDFATYYCQQGLLSPLTFGQGTKVEIK
+light_wt_sequence: DIQMTQSPASLSASVGETVTITCRASGNIHNYLAWYQQKQGKSPQLLVYNAKTLADGVPSRFSGSGSGTQYSLKINSLQPEDFGSYYCQHFWSTPRTFGGGTKLEIK
 model_type: ablang2
-
-acquisition_weight:
-    acquisition_score_0: 2
-    acquisition_score_1: 2
-    ablang2_perplexity: 0

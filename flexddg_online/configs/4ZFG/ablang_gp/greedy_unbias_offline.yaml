@@ -1,7 +1,5 @@
-data_dir: data/5A12_dual/ablang2/greedy_dual
-pdb_files:
-- pdbs/4ZFG.pdb
-- pdbs/4ZFF.pdb
+data_dir: data/5A12_Ang2_fitness_4ZFG/ablang_gp/greedy_unbias_offline
+pdb_file: pdbs/4ZFG.pdb
 seed: 42
 flx_num: 1
 max_cycles: 10
@@ -22,41 +20,25 @@ mask_indices:
 - 106
 - 107
 - 108
-POI: XXXX
+POI: 4ZFG
 mutations_col: mutations
 early_stop_patience: 20
 n_steps: 1000
 generation:
-  generation_mode: sampling
+  generation_mode: null
   generation_num: 10000
   temperature: 1.0
   normalize_mode: default
   ensemble_mode: true
   ensemble_num: 10
-  online_generation: true
-  bias: true
-  generation_file: sampling/5A12_dual/ablang2/bias/generation_result.csv
+  online_generation: false
+  bias: false
+  generation_file: sampling/5A12_Ang2_fitness_4ZFG/ablang2/unbias/generation_result.csv
 acquisition:
-  is_multi_objective: true
   strategy_name: greedy
   acquisition_num: 40
-  strategy_params: {}
-lora_config:
-  target_modules:
-  - q_proj
-  - k_proj
-  - v_proj
-  - out_proj
-  - intermediate_layer.0
-  - intermediate_layer.2
-  modules_to_save: []
-  inference_mode: false
-  lora_dropout: 0.1
-  lora_alpha: 8
 light_wt_sequence: DIQMTQSPSSLSASVGDRVTITCRASQFLSSFGVAWYQQKPGKAPKLLIYGASSLYSGVPSRFSGSGSGTDFTLTISSLQPEDFATYYCQQGLLSPLTFGQGTKVEIK
-model_type: ablang2
-
-acquisition_weight:
-    acquisition_score_0: 2
-    acquisition_score_1: 2
-    ablang2_perplexity: 0
+model_type: ablang_gp
+model_params:
+  kernel: rbf
+  add_kernel: true

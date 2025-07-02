@@ -1,7 +1,5 @@
-data_dir: data/5A12_dual/ablang2/greedy_dual_multi
-pdb_files:
-- pdbs/4ZFG.pdb
-- pdbs/4ZFF.pdb
+data_dir: data/5A12_VEGF_fitness_4ZFF/ablang2/greedy_approx
+pdb_file: pdbs/4ZFF.pdb
 seed: 42
 flx_num: 1
 max_cycles: 10
@@ -22,7 +20,7 @@ mask_indices:
 - 106
 - 107
 - 108
-POI: XXXX
+POI: 4ZFF
 mutations_col: mutations
 early_stop_patience: 20
 n_steps: 1000
@@ -35,12 +33,11 @@ generation:
   ensemble_num: 10
   online_generation: true
   bias: true
-  generation_file: sampling/5A12_dual/ablang2/bias/generation_result.csv
+  generation_file: sampling/5A12_VEGF_fitness_4ZFF/ablang2/bias/generation_result.csv
+  calculate_fitness: true
 acquisition:
-  is_multi_objective: true
   strategy_name: greedy
   acquisition_num: 40
-  strategy_params: {}
 lora_config:
   target_modules:
   - q_proj
@@ -55,10 +52,3 @@ lora_config:
   lora_alpha: 8
 light_wt_sequence: DIQMTQSPSSLSASVGDRVTITCRASQFLSSFGVAWYQQKPGKAPKLLIYGASSLYSGVPSRFSGSGSGTDFTLTISSLQPEDFATYYCQQGLLSPLTFGQGTKVEIK
 model_type: ablang2
-acquisition_weight:
-  acquisition_score_0: 2
-  acquisition_score_1: 2
-  ablang2_perplexity: 1.0
-  IP_seq: 1.0
-  instability_index: 1.0
-  hydrophobicity: 1.0
