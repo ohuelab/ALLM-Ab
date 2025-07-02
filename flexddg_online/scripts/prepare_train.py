@@ -78,9 +78,8 @@ class RosettaOutputAnalyzer:
 
     def check_output_success(self, struct_dir):
         """Check if Rosetta output files exist and are valid"""
-        rosetta_out = os.path.join(struct_dir, ROSETTA_OUTPUT_FILE)
         db3_file = os.path.join(struct_dir, OUTPUT_DB_FILE)
-        return os.path.isfile(rosetta_out) and os.path.isfile(db3_file)
+        return os.path.isfile(db3_file)
 
     def find_finished_jobs(self):
         """Find all completed job directories"""

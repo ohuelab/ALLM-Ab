@@ -1,7 +1,7 @@
 import argparse
 import numpy as np
 import pandas as pd
-from strategy import get_selector
+from strategy_gp import get_selector
 from utils import load_config
 
 from logits import ablang2_perplexity
@@ -10,6 +10,29 @@ from ablang2.load_model import load_model
 
 from tqdm import tqdm
 from pygmo import hypervolume
+
+def ip_seq_objective(x, peak = 8, x_lower = 6.7, x_upper = 9.05):
+    if x <= peak:
+        return 0.5 - (0.5 / 1.3) * (x - x_lower)
+    else:
+        return (0.5 / (x_upper-peak)) * (x - peak)
+
+def calculate_instability_index(sequence: str) -> float:
+    try:
+        analyzed_seq = ProteinAnalysis(sequence.upper())
+        return analyzed_seq.instability_index()
+    except Exception as e:
+        print(f"Error calculating instability index for {sequence}: {e}")
+        return float('nan')
+
+def calculate_hydrophobicity(sequence: str) -> float:
+    try:
+        analyzed_seq = ProteinAnalysis(sequence.upper())
+        return analyzed_seq.gravy()
+    except Exception as e:
+        print(f"Error calculating hydrophobicity for {sequence}: {e}")
+        return float('nan')
+
 
 def greedy_hypervolume_subset(points, n, ref_point):
     selected = []
@@ -20,7 +43,6 @@ def greedy_hypervolume_subset(points, n, ref_point):
         best_idx = None
 
         for idx in remaining:
-            # 現在の選択 + 候補点のHypervolume計算
             current_points = points[selected + [idx]]
             hv = hypervolume(current_points)
             current_hv = hv.compute(ref_point)
@@ -108,6 +130,8 @@ if __name__ == "__main__":
     AbLang, tokenizer, _ = load_model("ablang2-paired")
     pool_df["ablang2_perplexity"] = ablang2_perplexity(paired_sequences, AbLang, tokenizer, masked_pair_seq, mask_indices, device="cpu")
     pool_df["IP_seq"] = list(map(calculate_IP, mutated_sequences))
+    pool_df["instability_index"] = list(map(calculate_instability_index, mutated_sequences))
+    pool_df["hydrophobicity"] = list(map(calculate_hydrophobicity, mutated_sequences))
 
 
     # Hypervolume selection
@@ -116,27 +140,35 @@ if __name__ == "__main__":
         return (score-score.quantile(0.05))/(score.quantile(0.95)-score.quantile(0.05)+1e-10)
     pool_df["acquisition_score_std"] = normalize_score(-pool_df["acquisition_score"])
     pool_df["ablang2_perplexity_std"] = normalize_score(pool_df["ablang2_perplexity"])
-    pool_df["IP_seq_std"] = normalize_score(-pool_df["IP_seq"])
+    pool_df["IP_seq_std"] = normalize_score(pool_df["IP_seq"].apply(ip_seq_objective))
+    pool_df["instability_index_std"] = normalize_score(pool_df["instability_index"])
+    pool_df["hydrophobicity_std"] = normalize_score(pool_df["hydrophobicity"])
     acquisition_weight = config.get("acquisition_weight", {})
     pool_df["acquisition_score_std"] *= acquisition_weight.get("acquisition_score", 2)
     pool_df["ablang2_perplexity_std"] *= acquisition_weight.get("ablang2_perplexity", 1)
-    pool_df["IP_seq_std"] *= acquisition_weight.get("IP_seq", 1)
+    pool_df["IP_seq_std"] *= acquisition_weight.get("IP_seq", 0)
+    pool_df["instability_index_std"] *= acquisition_weight.get("instability_index", 0)
+    pool_df["hydrophobicity_std"] *= acquisition_weight.get("hydrophobicity", 0)
 
     acquisition_score_ref = pool_df["acquisition_score_std"].quantile(0.95)
     perplexity_ref = pool_df["ablang2_perplexity_std"].quantile(0.95)
     ip_seq_ref = pool_df["IP_seq_std"].quantile(0.95)
+    instability_index_ref = pool_df["instability_index_std"].quantile(0.95)
+    hydrophobicity_ref = pool_df["hydrophobicity_std"].quantile(0.95)
 
     Nprev = len(pool_df)
     pool_df_0 = pool_df.copy()
     pool_df = pool_df[pool_df["acquisition_score_std"] <= acquisition_score_ref]
     pool_df = pool_df[pool_df["ablang2_perplexity_std"] <= perplexity_ref]
     pool_df = pool_df[pool_df["IP_seq_std"] <= ip_seq_ref]
+    pool_df = pool_df[pool_df["instability_index_std"] <= instability_index_ref]
+    pool_df = pool_df[pool_df["hydrophobicity_std"] <= hydrophobicity_ref]
     pool_df[pool_df["ablang2_perplexity"]<config.acquisition.get("ablang2_perplexity_thr", np.inf)]
-    pre_cols = ["acquisition_score", "ablang2_perplexity", "IP_seq"]
+    pre_cols = ["acquisition_score", "ablang2_perplexity", "IP_seq", "instability_index", "hydrophobicity"]
     obj_cols = []
     ref_point = []
     for col in pre_cols:
-        if acquisition_weight.get(col, 1) > 0:
+        if acquisition_weight.get(col, 0) > 0:
             obj_cols.append(col+"_std")
             if "acquisition_score" in col:
                 ref_point.append(acquisition_weight.get(col, 2))
@@ -152,7 +184,7 @@ if __name__ == "__main__":
         selected_indices = greedy_hypervolume_subset(X, selection_size, ref_point)
     elif multi_objective_strategy == "sum":
         # select top order of sum of scores, smaller is better
-        pool_df["sum_score"] = pool_df["acquisition_score_std"] + pool_df["ablang2_perplexity_std"] + pool_df["IP_seq_std"]
+        pool_df["sum_score"] = pool_df["acquisition_score_std"] + pool_df["ablang2_perplexity_std"] + pool_df["IP_seq_std"] + pool_df["instability_index_std"] + pool_df["hydrophobicity_std"]
         pool_df = pool_df.sort_values("sum_score", ascending=True)
         selected_indices = pool_df.index[:selection_size]
     elif multi_objective_strategy == "non_dominated":
@@ -161,7 +193,7 @@ if __name__ == "__main__":
         pool_df = pool_df.iloc[np.argsort(ranks)]
         selected_indices = pool_df.index[:selection_size]
     else:
-        raise ValueError(f"Invalid multi-objective strategy: {multi_objective_strategy}")
+        raise ValueError(f"Invalid multi_objective strategy: {multi_objective_strategy}")
     selected_indices = pool_df.index[selected_indices]
 
     selected_df = pool_df.loc[selected_indices]

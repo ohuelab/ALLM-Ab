@@ -11,6 +11,29 @@ from ablang2.load_model import load_model
 from tqdm import tqdm
 from pygmo import hypervolume
 
+def ip_seq_objective(x, peak = 8, x_lower = 6.7, x_upper = 9.05):
+    if x <= peak:
+        return 0.5 - (0.5 / 1.3) * (x - x_lower)
+    else:
+        return (0.5 / (x_upper-peak)) * (x - peak)
+
+def calculate_instability_index(sequence: str) -> float:
+    try:
+        analyzed_seq = ProteinAnalysis(sequence.upper())
+        return analyzed_seq.instability_index()
+    except Exception as e:
+        print(f"Error calculating instability index for {sequence}: {e}")
+        return float('nan')
+
+def calculate_hydrophobicity(sequence: str) -> float:
+    try:
+        analyzed_seq = ProteinAnalysis(sequence.upper())
+        return analyzed_seq.gravy()
+    except Exception as e:
+        print(f"Error calculating hydrophobicity for {sequence}: {e}")
+        return float('nan')
+
+
 def greedy_hypervolume_subset(points, n, ref_point):
     selected = []
     remaining = list(range(len(points)))
@@ -118,6 +141,8 @@ if __name__ == "__main__":
     AbLang, tokenizer, _ = load_model("ablang2-paired")
     pool_df["ablang2_perplexity"] = ablang2_perplexity(paired_sequences, AbLang, tokenizer, masked_pair_seq, mask_indices, device="cpu")
     pool_df["IP_seq"] = list(map(calculate_IP, mutated_sequences))
+    pool_df["instability_index"] = list(map(calculate_instability_index, mutated_sequences))
+    pool_df["hydrophobicity"] = list(map(calculate_hydrophobicity, mutated_sequences))
 
 
     # Hypervolume selection
@@ -135,14 +160,22 @@ if __name__ == "__main__":
     pool_df["ablang2_perplexity_std"] = normalize_score(pool_df["ablang2_perplexity"])
     if acquisition_weight.get("ablang2_perplexity", 1) > 0:
         score_cols.append("ablang2_perplexity_std")
-    pool_df["IP_seq_std"] = normalize_score(-pool_df["IP_seq"])
-    if acquisition_weight.get("IP_seq", 1) > 0:
+    pool_df["IP_seq_std"] = normalize_score(pool_df["IP_seq"].apply(ip_seq_objective))
+    if acquisition_weight.get("IP_seq", 0) > 0:
         score_cols.append("IP_seq_std")
+    pool_df["instability_index_std"] = normalize_score(pool_df["instability_index"])
+    if acquisition_weight.get("instability_index", 0) > 0:
+        score_cols.append("instability_index_std")
+    pool_df["hydrophobicity_std"] = normalize_score(pool_df["hydrophobicity"])
+    if acquisition_weight.get("hydrophobicity", 0) > 0:
+        score_cols.append("hydrophobicity_std")
 
     for i in range(num_score):
         pool_df[f"acquisition_score_std_{i}"] *= acquisition_weight.get(f"acquisition_score_{i}", 2)
     pool_df["ablang2_perplexity_std"] *= acquisition_weight.get("ablang2_perplexity", 1)
-    pool_df["IP_seq_std"] *= acquisition_weight.get("IP_seq", 1)
+    pool_df["IP_seq_std"] *= acquisition_weight.get("IP_seq", 0)
+    pool_df["instability_index_std"] *= acquisition_weight.get("instability_index", 0)
+    pool_df["hydrophobicity_std"] *= acquisition_weight.get("hydrophobicity", 0)
 
     ref_point = []
     for col in score_cols:

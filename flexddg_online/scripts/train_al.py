@@ -445,12 +445,13 @@ def print_results(val_spearman_scores, test_spearman, best_epoch):
 
 def save_results(model, df_test, args):
     """Save model and predictions."""
+    actual_model = model.module if isinstance(model, DataParallel) else model
     if args.model_type == 'sequence':
-        torch.save(model.esm_pretrain_model.state_dict(), f'{args.output_dir}/model.pt')
+        torch.save(actual_model.esm_pretrain_model.state_dict(), f'{args.output_dir}/model.pt')
     elif args.model_type == 'ablang2':
-        torch.save(model.ablang2_pretrain_model.state_dict(), f'{args.output_dir}/model.pt')
+        torch.save(actual_model.ablang2_pretrain_model.state_dict(), f'{args.output_dir}/model.pt')
     if df_test is not None:
-        test_preds = get_predictions(model, df_test, args)
+        test_preds = get_predictions(actual_model, df_test, args)
         np.save(f'{args.output_dir}/test_preds.npy', test_preds)
 
 

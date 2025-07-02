@@ -29,7 +29,7 @@ n_steps: 1000
 generation:
   generation_mode: sampling
   generation_num: 10000
-  temperature: 0.5
+  temperature: 1.0
   normalize_mode: default
   ensemble_mode: true
   ensemble_num: 10
