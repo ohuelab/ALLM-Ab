@@ -145,6 +145,8 @@ class ActiveLearningPipeline:
             command_args.append(model_path)
         if self.config.generation.get("bias", False):
             command_args.append("--bias")
+        if self.config.generation.get("calculate_fitness", False):
+            command_args.append("--calculate_fitness")
         self.execute_in_shell(command_args)
 
         if not os.path.exists(generation_file):
