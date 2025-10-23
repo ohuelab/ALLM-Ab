@@ -68,4 +68,4 @@ python al_run_filling.py sample.yaml
 
 ## Citation
 
-This work is currently under review.
+Furui K, Ohue M. ALLM-Ab: Active Learning-Driven Antibody Optimization Using Fine-Tuned Protein Language Models. _Journal of Chemical Information and Modeling_, Article ASAP, 2025. https://doi.org/10.1021/acs.jcim.5c01577
