@@ -1,7 +1,6 @@
 # ALLM-Ab: Active Learning-Driven Antibody Optimization Using Fine-tuned Protein Language Models
 
-![ALLM-Ab-workflow](./assets/ALLM-Ab_workflow.png)
-![ALLM-Ab-scatter](./assets/ALLM-Ab_scatter.png)
+![ALLM-Ab-toc](./assets/ALLM-Ab_toc.jpeg)
 
 This repository contains the code for ALLM-Ab, a multi-objective antibody optimization framework using protein language models.
 
